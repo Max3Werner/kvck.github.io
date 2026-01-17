@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block title %}{{ event.title }} - Klubbans Vänner{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 800px;">
+    <a href="{{ url_for('events.index') }}" style="display: inline-flex; align-items: center; gap: 0.5rem; color: var(--gray); margin-bottom: 1.5rem;">&larr; Alla turer</a>
+
+    <div class="card">
+        <!-- Header -->
+        <div style="padding: 1.5rem; background: linear-gradient(135deg, var(--orange-glow), var(--pink-glow)); border-bottom: 1px solid var(--border);">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
+                <div>
+                    <span class="badge badge-{{ 'blue' if event.event_type == 'external' else 'orange' }}" style="margin-bottom: 0.75rem;">
+                        {% if event.event_type == 'social' %}☕ Social{% elif event.event_type == 'race' %}🏁 Lopp{% elif event.event_type == 'external' %}🌐 Externt{% else %}🚴 Grupptur{% endif %}
+                    </span>
+                    <h1 style="font-size: 1.75rem; margin-bottom: 0.5rem;">{{ event.title }}</h1>
+                    {% if event.subtitle %}
+                        <p style="color: var(--gray); font-size: 1rem;">{{ event.subtitle }}</p>
+                    {% endif %}
+                </div>
+                <div class="event-date-badge" style="font-size: 1rem;">
+                    <div class="event-date-day" style="font-size: 1.75rem;">{{ event.date.strftime('%d') }}</div>
+                    <div class="event-date-month">{{ event.date.strftime('%b %Y') }}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-body">
+            <!-- Info Grid -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+                <div style="background: var(--black); border: 1px solid var(--border); border-radius: 10px; padding: 1rem;">
+                    <div style="font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gray); margin-bottom: 0.25rem;">Datum & Tid</div>
+                    <div style="font-weight: 500; color: var(--orange);">{{ event.date.strftime('%d %b %Y, %H:%M') }}</div>
+                </div>
+                {% if event.location %}
+                <div style="background: var(--black); border: 1px solid var(--border); border-radius: 10px; padding: 1rem;">
+                    <div style="font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gray); margin-bottom: 0.25rem;">Plats</div>
+                    <div style="font-weight: 500;">{{ event.location }}</div>
+                </div>
+                {% endif %}
+                {% if event.distance_km %}
+                <div style="background: var(--black); border: 1px solid var(--border); border-radius: 10px; padding: 1rem;">
+                    <div style="font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gray); margin-bottom: 0.25rem;">Distans</div>
+                    <div style="font-weight: 500;">{{ event.distance_km|int }} km</div>
+                </div>
+                {% endif %}
+                {% if event.difficulty %}
+                <div style="background: var(--black); border: 1px solid var(--border); border-radius: 10px; padding: 1rem;">
+                    <div style="font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gray); margin-bottom: 0.25rem;">Svårighetsgrad</div>
+                    <span class="difficulty difficulty-{{ event.difficulty }}">{{ event.difficulty }}</span>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Description -->
+            {% if event.description %}
+            <div style="margin-bottom: 1.5rem;">
+                <h3 style="font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gray); margin-bottom: 0.75rem;">Beskrivning</h3>
+                <div style="color: var(--gray-light); line-height: 1.7; white-space: pre-wrap;">{{ event.description }}</div>
+            </div>
+            {% endif %}
+
+            <!-- External Link -->
+            {% if event.external_url %}
+            <a href="{{ event.external_url }}" target="_blank" rel="noopener" class="btn btn-secondary" style="margin-bottom: 1.5rem;">
+                🌐 Besök webbplats &rarr;
+            </a>
+            {% endif %}
+
+            <!-- Join/Leave Button -->
+            {% if current_user.is_authenticated %}
+                {% if is_participating %}
+                    <form method="POST" action="{{ url_for('events.leave', event_id=event.id) }}" style="display: inline;">
+                        <button type="submit" class="btn btn-secondary">Lämna event</button>
+                    </form>
+                {% else %}
+                    <form method="POST" action="{{ url_for('events.join', event_id=event.id) }}" style="display: inline;">
+                        <button type="submit" class="btn btn-primary">Häng med!</button>
+                    </form>
+                {% endif %}
+            {% else %}
+                <a href="{{ url_for('auth.login') }}" class="btn btn-primary">Logga in för att anmäla dig</a>
+            {% endif %}
+        </div>
+
+        <!-- Participants -->
+        <div class="card-footer">
+            <h4 style="font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gray); margin-bottom: 1rem;">
+                Deltagare ({{ participants|length }})
+            </h4>
+            {% if participants %}
+                <div style="display: flex; flex-wrap: wrap; gap: 0.75rem;">
+                    {% for p in participants %}
+                    <a href="{{ url_for('profile.view', username=p.user.username) }}" style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 0.75rem; background: var(--black-lighter); border-radius: 100px; text-decoration: none; color: var(--white);">
+                        <div class="avatar" style="width: 28px; height: 28px; font-size: 0.75rem;">
+                            {{ p.user.display_name[0].upper() if p.user.display_name else '?' }}
+                        </div>
+                        <span style="font-size: 0.875rem;">{{ p.user.display_name or p.user.username }}</span>
+                    </a>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p style="color: var(--gray);">Inga deltagare ännu. Bli först!</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

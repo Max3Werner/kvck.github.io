@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}Berättelser - Klubbans Vänner{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="page-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+        <div>
+            <h1 class="page-title">Berättelser</h1>
+            <p class="page-subtitle">Reseberättelser och turrapporter från medlemmarna</p>
+        </div>
+        {% if current_user.is_authenticated %}
+            <a href="{{ url_for('stories.create') }}" class="btn btn-primary">+ Skriv berättelse</a>
+        {% endif %}
+    </div>
+
+    {% if stories %}
+        <div class="grid grid-2">
+            {% for story in stories %}
+            <a href="{{ url_for('stories.detail', slug=story.slug) }}" class="card" style="text-decoration: none; color: inherit;">
+                {% if story.cover_image_url %}
+                <div style="height: 200px; background: url('{{ story.cover_image_url }}') center/cover; border-radius: 16px 16px 0 0;"></div>
+                {% endif %}
+                <div class="card-body">
+                    <h3 style="margin-bottom: 0.5rem;">{{ story.title }}</h3>
+                    <p style="color: var(--gray); font-size: 0.9375rem; line-height: 1.6;">
+                        {{ story.excerpt or story.content[:200] }}...
+                    </p>
+                    <div style="display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 1rem; font-size: 0.8125rem; color: var(--gray);">
+                        <span>{{ story.author.display_name or story.author.username }}</span>
+                        <span>{{ story.published_at.strftime('%d %b %Y') }}</span>
+                        {% if story.distance_km %}
+                            <span>📏 {{ story.distance_km|int }} km</span>
+                        {% endif %}
+                        {% if story.location %}
+                            <span>📍 {{ story.location }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <div class="empty-state-icon">📖</div>
+            <p class="empty-state-text">Inga berättelser publicerade än.</p>
+            {% if current_user.is_authenticated %}
+                <a href="{{ url_for('stories.create') }}" class="btn btn-primary">Skriv den första!</a>
+            {% endif %}
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

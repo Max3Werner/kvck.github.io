@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}Verifiera din e-post - Klubbans Vanner{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 440px; padding-top: 3rem;">
+    <div style="text-align: center; margin-bottom: 2rem;">
+        <div style="font-size: 4rem; margin-bottom: 1rem;">📧</div>
+        <h1 style="font-size: 1.75rem; margin-bottom: 0.5rem;">Kolla din inkorg!</h1>
+        <p style="color: var(--gray);">Vi har skickat ett verifieringsmail till dig.</p>
+    </div>
+
+    <div class="card">
+        <div class="card-body" style="text-align: center;">
+            <p style="color: var(--gray); margin-bottom: 1.5rem; line-height: 1.6;">
+                Klicka pa lanken i mailet for att verifiera din e-postadress.
+                Lanken ar giltig i 24 timmar.
+            </p>
+
+            <div style="background: var(--bg-secondary); border-radius: 8px; padding: 1rem; margin-bottom: 1.5rem;">
+                <p style="margin: 0; font-size: 0.875rem; color: var(--text-muted);">
+                    Hittar du inte mailet? Kolla din skrappost eller spam-mapp.
+                </p>
+            </div>
+
+            <form method="POST" action="{{ url_for('auth.resend_verification') }}">
+                <button type="submit" class="btn btn-secondary" style="width: 100%;">
+                    Skicka verifieringsmail igen
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <p style="text-align: center; margin-top: 1.5rem; color: var(--gray);">
+        <a href="{{ url_for('auth.login') }}">Tillbaka till inloggning</a>
+    </p>
+</div>
+{% endblock %}

@@ -1,0 +1,14 @@
+Hej {{ user.display_name or user.username }},
+
+Tack for ditt intresse att ga med i Klubbans Vanner.
+
+Tyvarr kunde vi inte godkanna din ansokan just nu.
+
+{% if reason %}
+Anledning: {{ reason }}
+{% endif %}
+
+Om du har fragor eller tror att detta ar ett misstag, kontakta oss garna.
+
+Med vanliga halsningar,
+Klubbans Vanner

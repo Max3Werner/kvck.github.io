@@ -1,0 +1,66 @@
+{% extends "admin/base.html" %}
+
+{% block title %}{{ 'Redigera nyhet' if news else 'Ny nyhet' }}{% endblock %}
+{% block page_title %}{{ 'Redigera nyhet' if news else 'Ny nyhet' }}{% endblock %}
+
+{% block top_actions %}
+<a href="{{ url_for('admin.news_list') }}" class="btn btn-secondary">Tillbaka</a>
+{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-body">
+        <form method="POST" enctype="multipart/form-data">
+            <div class="form-group">
+                <label class="form-label">Titel *</label>
+                <input type="text" name="title" class="form-input" value="{{ news.title if news else '' }}" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Sammanfattning</label>
+                <textarea name="excerpt" class="form-textarea" rows="2" placeholder="Kort beskrivning som visas i förhandsgranskning...">{{ news.excerpt if news else '' }}</textarea>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Innehåll *</label>
+                <textarea name="content" class="form-textarea" rows="10" required>{{ news.content if news else '' }}</textarea>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Bild</label>
+                {% if news and news.image_url %}
+                    <div style="margin-bottom: 1rem;">
+                        <img src="{{ news.image_url }}" class="image-preview image-preview-lg" alt="Current image">
+                    </div>
+                {% endif %}
+                <label class="file-upload">
+                    <div class="file-upload-icon">🖼️</div>
+                    <div class="file-upload-text">Klicka för att ladda upp bild</div>
+                    <input type="file" name="image" accept="image/*">
+                    <img class="upload-preview image-preview image-preview-lg" style="display: none; margin-top: 1rem;">
+                </label>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-check">
+                        <input type="checkbox" name="is_published" {{ 'checked' if news and news.is_published else '' }}>
+                        <span>Publicera (synlig på hemsidan)</span>
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label class="form-check">
+                        <input type="checkbox" name="is_featured" {{ 'checked' if news and news.is_featured else '' }}>
+                        <span>Markera som utvald</span>
+                    </label>
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                <button type="submit" class="btn btn-primary">{{ 'Spara ändringar' if news else 'Skapa nyhet' }}</button>
+                <a href="{{ url_for('admin.news_list') }}" class="btn btn-secondary">Avbryt</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

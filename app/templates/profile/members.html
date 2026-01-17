@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}Medlemmar - Klubbans Vänner{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="page-header">
+        <h1 class="page-title">Medlemmar</h1>
+        <p class="page-subtitle">{{ users|length }} vänner i klubben</p>
+    </div>
+
+    <div class="grid grid-3">
+        {% for user in users %}
+        <a href="{{ url_for('profile.view', username=user.username) }}" class="card" style="text-decoration: none; color: inherit;">
+            <div class="card-body" style="display: flex; align-items: center; gap: 1rem;">
+                <div class="avatar">
+                    {{ user.display_name[0].upper() if user.display_name else '?' }}
+                </div>
+                <div>
+                    <h3 style="font-size: 1rem; margin-bottom: 0.125rem;">{{ user.display_name or user.username }}</h3>
+                    <p style="font-size: 0.8125rem; color: var(--gray);">@{{ user.username }}</p>
+                </div>
+                {% if user.is_admin %}
+                    <span class="badge badge-pink" style="margin-left: auto;">Admin</span>
+                {% endif %}
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block title %}Turer - Klubbans Vänner{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="page-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+        <div>
+            <h1 class="page-title">Turer & Event</h1>
+            <p class="page-subtitle">Häng med på nästa äventyr</p>
+        </div>
+        {% if current_user.is_authenticated %}
+            <a href="{{ url_for('events.create') }}" class="btn btn-primary">+ Skapa tur</a>
+        {% endif %}
+    </div>
+
+    <!-- Upcoming Events -->
+    <div class="section-label">Kommande</div>
+    {% if upcoming_events %}
+        <div class="grid grid-2" style="margin-bottom: 3rem;">
+            {% for event in upcoming_events %}
+            <a href="{{ url_for('events.detail', event_id=event.id) }}" class="event-card" style="text-decoration: none; color: inherit;">
+                <div class="event-card-header">
+                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                        <div class="event-icon {{ event.event_type or 'ride' }}">
+                            {% if event.event_type == 'social' %}☕{% elif event.event_type == 'race' %}🏁{% elif event.event_type == 'external' %}🌐{% else %}🚴{% endif %}
+                        </div>
+                        <div>
+                            <div style="font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--gray);">
+                                {{ event.event_type or 'Grupptur' }}
+                            </div>
+                            <h3 class="event-title">{{ event.title }}</h3>
+                        </div>
+                    </div>
+                    <div class="event-date-badge">
+                        <div class="event-date-day">{{ event.date.strftime('%d') }}</div>
+                        <div class="event-date-month">{{ event.date.strftime('%b') }}</div>
+                    </div>
+                </div>
+                {% if event.subtitle %}
+                    <p style="color: var(--gray); font-size: 0.9375rem; margin-bottom: 1rem;">{{ event.subtitle }}</p>
+                {% endif %}
+                <div class="event-meta">
+                    {% if event.location %}
+                        <span class="event-meta-item">📍 {{ event.location }}</span>
+                    {% endif %}
+                    <span class="event-meta-item">🕐 {{ event.date.strftime('%H:%M') }}</span>
+                    {% if event.distance_km %}
+                        <span class="event-meta-item">📏 {{ event.distance_km|int }} km</span>
+                    {% endif %}
+                    {% if event.difficulty %}
+                        <span class="event-meta-item">
+                            <span class="difficulty difficulty-{{ event.difficulty }}">{{ event.difficulty }}</span>
+                        </span>
+                    {% endif %}
+                </div>
+                <div style="margin-top: 1rem; font-size: 0.8125rem; color: var(--gray);">
+                    {{ event.participant_count() }} anmälda
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state" style="margin-bottom: 3rem;">
+            <div class="empty-state-icon">🚴</div>
+            <p class="empty-state-text">Inga kommande turer just nu.</p>
+            {% if current_user.is_authenticated %}
+                <a href="{{ url_for('events.create') }}" class="btn btn-primary">Skapa den första!</a>
+            {% endif %}
+        </div>
+    {% endif %}
+
+    <!-- Past Events -->
+    {% if past_events %}
+    <div class="section-label">Tidigare</div>
+    <div class="grid grid-2">
+        {% for event in past_events %}
+        <a href="{{ url_for('events.detail', event_id=event.id) }}" class="event-card" style="text-decoration: none; color: inherit; opacity: 0.7;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                <div>
+                    <div style="font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--gray);">
+                        {{ event.date.strftime('%d %b %Y') }}
+                    </div>
+                    <h3 class="event-title">{{ event.title }}</h3>
+                </div>
+                <span class="badge badge-orange">Avslutad</span>
+            </div>
+            {% if event.location %}
+                <div style="color: var(--gray); font-size: 0.875rem; margin-top: 0.5rem;">📍 {{ event.location }}</div>
+            {% endif %}
+        </a>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

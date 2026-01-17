@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}Foto - Klubbans Vänner{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 900px;">
+    <a href="{{ url_for('gallery.index') }}" style="display: inline-flex; align-items: center; gap: 0.5rem; color: var(--gray); margin-bottom: 1.5rem;">&larr; Tillbaka till galleriet</a>
+
+    <div class="card">
+        <div style="background: var(--black);">
+            <img src="{{ url_for('static', filename='uploads/' + photo.filename) }}" alt="{{ photo.caption or 'Foto' }}" style="width: 100%; max-height: 70vh; object-fit: contain;">
+        </div>
+        <div class="card-body">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
+                <div>
+                    {% if photo.caption %}
+                        <p style="font-size: 1.125rem; margin-bottom: 0.75rem;">{{ photo.caption }}</p>
+                    {% endif %}
+                    <div style="display: flex; flex-wrap: wrap; gap: 1rem; color: var(--gray); font-size: 0.875rem;">
+                        <a href="{{ url_for('profile.view', username=photo.uploader.username) }}" style="display: flex; align-items: center; gap: 0.5rem; color: inherit;">
+                            <div class="avatar" style="width: 24px; height: 24px; font-size: 0.625rem;">
+                                {{ photo.uploader.display_name[0].upper() if photo.uploader.display_name else '?' }}
+                            </div>
+                            <span>{{ photo.uploader.display_name or photo.uploader.username }}</span>
+                        </a>
+                        <span>{{ photo.uploaded_at.strftime('%d %b %Y') }}</span>
+                        {% if photo.location %}
+                            <span>📍 {{ photo.location }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                {% if current_user.is_authenticated and (current_user.id == photo.uploader_id or current_user.is_admin) %}
+                <form method="POST" action="{{ url_for('gallery.delete', photo_id=photo.id) }}" onsubmit="return confirm('Är du säker på att du vill ta bort denna bild?');">
+                    <button type="submit" class="btn btn-secondary" style="color: #ef4444;">🗑️ Ta bort</button>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

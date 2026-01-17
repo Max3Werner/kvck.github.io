@@ -1,0 +1,36 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Fotogalleri{% endblock %}
+{% block page_title %}Fotogalleri{% endblock %}
+
+{% block top_actions %}
+<a href="{{ url_for('admin.photos_upload') }}" class="btn btn-primary">+ Ladda upp foton</a>
+{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-body">
+        {% if photos %}
+            <div class="photo-grid">
+                {% for photo in photos %}
+                <div class="photo-item">
+                    <img src="{{ photo.filename }}" alt="{{ photo.caption or 'Photo' }}">
+                    <div class="photo-overlay">
+                        <a href="{{ url_for('admin.photos_edit', id=photo.id) }}" class="btn btn-secondary btn-sm">Redigera</a>
+                        <form action="{{ url_for('admin.photos_delete', id=photo.id) }}" method="POST" style="display: inline;" onsubmit="return confirm('Ta bort denna bild?');">
+                            <button type="submit" class="btn btn-danger btn-sm">Ta bort</button>
+                        </form>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <div class="empty-state-icon">📸</div>
+                <p class="empty-state-text">Inga foton uppladdade ännu</p>
+                <a href="{{ url_for('admin.photos_upload') }}" class="btn btn-primary">Ladda upp första fotot</a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

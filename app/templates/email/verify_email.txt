@@ -1,0 +1,16 @@
+Hej {{ user.display_name or user.username }}!
+
+Valkommen till Klubbans Vanner!
+
+For att slutfora din registrering behover du verifiera din e-postadress.
+
+Klicka pa lanken nedan for att verifiera din e-post:
+{{ verify_url }}
+
+Lanken ar giltig i 24 timmar.
+
+Om du inte skapade ett konto hos Klubbans Vanner kan du ignorera detta mail.
+
+---
+Klubbans Vanner
+Snyggaste klubben och snallaste!

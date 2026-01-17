@@ -1,0 +1,121 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Medlemmar{% endblock %}
+{% block page_title %}Medlemmar{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Medlem</th>
+                    <th>E-post</th>
+                    <th>Status</th>
+                    <th>Roll</th>
+                    <th>Medlem sedan</th>
+                    <th>Atgarder</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for member in members %}
+                <tr>
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                            {% if member.avatar_url %}
+                                <img src="{{ member.avatar_url }}" class="image-preview" style="width: 40px; height: 40px; border-radius: 50%;" alt="">
+                            {% else %}
+                                <div style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, var(--orange), #ff8fab); display: flex; align-items: center; justify-content: center; color: white; font-weight: 600;">
+                                    {{ (member.display_name or member.username)[0].upper() }}
+                                </div>
+                            {% endif %}
+                            <div>
+                                <strong>{{ member.display_name or member.username }}</strong>
+                                <br><small style="color: var(--text-muted);">@{{ member.username }}</small>
+                            </div>
+                        </div>
+                    </td>
+                    <td>{{ member.email }}</td>
+                    <td>
+                        {% if member.state == UserState.ACTIVE.value %}
+                            <span class="badge badge-success">Aktiv</span>
+                        {% elif member.state == UserState.PENDING_EMAIL_VERIFICATION.value %}
+                            <span class="badge badge-warning">Vantar verifiering</span>
+                        {% elif member.state == UserState.PENDING_APPROVAL.value %}
+                            <span class="badge badge-warning">Vantar godkannande</span>
+                        {% elif member.state == UserState.SUSPENDED.value %}
+                            <span class="badge badge-error">Avstangd</span>
+                        {% elif member.state == UserState.REJECTED.value %}
+                            <span class="badge badge-error">Avvisad</span>
+                        {% else %}
+                            <span class="badge badge-info">{{ member.state }}</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if member.role == UserRole.ADMIN.value %}
+                            <span class="badge badge-success">Admin</span>
+                        {% elif member.role == UserRole.MODERATOR.value %}
+                            <span class="badge badge-info">Moderator</span>
+                        {% else %}
+                            <span class="badge" style="background: var(--bg); color: var(--text-muted);">Medlem</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ member.created_at.strftime('%Y-%m-%d') }}</td>
+                    <td>
+                        <div class="table-actions">
+                            <a href="{{ url_for('admin.members_edit', id=member.id) }}" class="btn btn-secondary btn-sm">Redigera</a>
+                            {% if member.id != current_user.id %}
+                                {% if member.state == UserState.ACTIVE.value %}
+                                    <button type="button" class="btn btn-sm" style="background: var(--warning); color: white;" onclick="showSuspendModal({{ member.id }}, '{{ member.display_name or member.username }}')">Stang av</button>
+                                {% elif member.state in [UserState.SUSPENDED.value, UserState.REJECTED.value] %}
+                                    <form action="{{ url_for('admin.members_reactivate', id=member.id) }}" method="POST" style="display: inline;">
+                                        <button type="submit" class="btn btn-sm" style="background: var(--success); color: white;">Ateraktivera</button>
+                                    </form>
+                                {% endif %}
+                                <form action="{{ url_for('admin.members_delete', id=member.id) }}" method="POST" style="display: inline;" onsubmit="return confirm('Ar du saker pa att du vill ta bort denna medlem? Detta kan inte angras.');">
+                                    <button type="submit" class="btn btn-danger btn-sm">Ta bort</button>
+                                </form>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Suspend Modal -->
+<div id="suspendModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
+    <div style="background: white; border-radius: 12px; padding: 1.5rem; max-width: 400px; width: 90%; margin: auto;">
+        <h3 style="margin: 0 0 1rem;">Stang av anvandare</h3>
+        <p style="color: var(--text-muted); margin-bottom: 1rem;">Ar du saker pa att du vill stanga av <strong id="suspendUserName"></strong>?</p>
+        <form id="suspendForm" method="POST">
+            <div class="form-group">
+                <label class="form-label">Anledning (valfritt)</label>
+                <textarea name="reason" class="form-textarea" rows="3" placeholder="Ange en anledning om du vill..."></textarea>
+            </div>
+            <div style="display: flex; gap: 0.75rem; justify-content: flex-end;">
+                <button type="button" class="btn btn-secondary" onclick="hideSuspendModal()">Avbryt</button>
+                <button type="submit" class="btn" style="background: var(--warning); color: white;">Stang av</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function showSuspendModal(userId, userName) {
+    document.getElementById('suspendUserName').textContent = userName;
+    document.getElementById('suspendForm').action = '/admin/members/' + userId + '/suspend';
+    document.getElementById('suspendModal').style.display = 'flex';
+}
+
+function hideSuspendModal() {
+    document.getElementById('suspendModal').style.display = 'none';
+}
+
+document.getElementById('suspendModal').addEventListener('click', function(e) {
+    if (e.target === this) hideSuspendModal();
+});
+</script>
+{% endblock %}

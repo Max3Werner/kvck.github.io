@@ -1,0 +1,81 @@
+{% extends "admin/base.html" %}
+
+{% block title %}{{ 'Redigera berättelse' if story else 'Ny berättelse' }}{% endblock %}
+{% block page_title %}{{ 'Redigera berättelse' if story else 'Ny berättelse' }}{% endblock %}
+
+{% block top_actions %}
+<a href="{{ url_for('admin.stories_list') }}" class="btn btn-secondary">Tillbaka</a>
+{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-body">
+        <form method="POST" enctype="multipart/form-data">
+            <div class="form-group">
+                <label class="form-label">Titel *</label>
+                <input type="text" name="title" class="form-input" value="{{ story.title if story else '' }}" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Sammanfattning</label>
+                <textarea name="excerpt" class="form-textarea" rows="3" placeholder="Kort beskrivning som visas i listor...">{{ story.excerpt if story else '' }}</textarea>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Innehåll *</label>
+                <textarea name="content" class="form-textarea" rows="15" required placeholder="Skriv din berättelse här...">{{ story.content if story else '' }}</textarea>
+                <p class="form-hint">Du kan använda radbrytningar för att skapa stycken.</p>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Plats</label>
+                    <input type="text" name="location" class="form-input" value="{{ story.location if story else '' }}" placeholder="T.ex. Dalarna, Sverige">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Datum för turen</label>
+                    <input type="date" name="ride_date" class="form-input" value="{{ story.ride_date.strftime('%Y-%m-%d') if story and story.ride_date else '' }}">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Distans (km)</label>
+                    <input type="number" name="distance_km" class="form-input" step="0.1" value="{{ story.distance_km if story and story.distance_km else '' }}">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Tid (timmar)</label>
+                    <input type="number" name="duration_hours" class="form-input" step="0.5" value="{{ story.duration_hours if story and story.duration_hours else '' }}">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Omslagsbild</label>
+                {% if story and story.cover_image_url %}
+                    <div style="margin-bottom: 1rem;">
+                        <img src="{{ story.cover_image_url }}" class="image-preview image-preview-lg" alt="Current cover">
+                    </div>
+                {% endif %}
+                <label class="file-upload">
+                    <div class="file-upload-icon">🖼️</div>
+                    <div class="file-upload-text">Klicka för att ladda upp omslagsbild</div>
+                    <input type="file" name="cover_image" accept="image/*">
+                    <img class="upload-preview image-preview image-preview-lg" style="display: none; margin-top: 1rem;">
+                </label>
+            </div>
+
+            <div class="form-group">
+                <label class="form-check">
+                    <input type="checkbox" name="is_published" {{ 'checked' if story and story.is_published else '' }}>
+                    <span>Publicera (synlig på hemsidan)</span>
+                </label>
+            </div>
+
+            <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                <button type="submit" class="btn btn-primary">{{ 'Spara ändringar' if story else 'Skapa berättelse' }}</button>
+                <a href="{{ url_for('admin.stories_list') }}" class="btn btn-secondary">Avbryt</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

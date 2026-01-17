@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}Ladda upp bilder - Klubbans Vänner{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 600px;">
+    <div class="page-header">
+        <h1 class="page-title">Ladda upp bilder</h1>
+        <p class="page-subtitle">Dela dina bästa cykelbilder</p>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <form method="POST" action="{{ url_for('gallery.upload') }}" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label class="form-label" for="photos">Välj bilder *</label>
+                    <input type="file" id="photos" name="photos" class="form-input" accept="image/*" multiple required style="padding: 1rem;">
+                    <p style="font-size: 0.8125rem; color: var(--gray); margin-top: 0.5rem;">
+                        Max 16 MB per bild. Tillåtna format: PNG, JPG, GIF, WebP
+                    </p>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="caption">Bildtext (valfritt)</label>
+                    <input type="text" id="caption" name="caption" class="form-input" placeholder="Beskriv bilderna...">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="location">Plats (valfritt)</label>
+                    <input type="text" id="location" name="location" class="form-input" placeholder="Var togs bilderna?">
+                </div>
+
+                <div style="display: flex; gap: 1rem;">
+                    <button type="submit" class="btn btn-primary" style="flex: 1;">Ladda upp</button>
+                    <a href="{{ url_for('gallery.index') }}" class="btn btn-secondary">Avbryt</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

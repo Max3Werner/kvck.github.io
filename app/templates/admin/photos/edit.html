@@ -1,0 +1,56 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Redigera foto{% endblock %}
+{% block page_title %}Redigera foto{% endblock %}
+
+{% block top_actions %}
+<a href="{{ url_for('admin.photos_list') }}" class="btn btn-secondary">Tillbaka</a>
+{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-body">
+        <div style="text-align: center; margin-bottom: 2rem;">
+            <img src="{{ photo.filename }}" style="max-width: 100%; max-height: 400px; border-radius: 8px;" alt="">
+        </div>
+
+        <form method="POST">
+            <div class="form-group">
+                <label class="form-label">Bildtext</label>
+                <input type="text" name="caption" class="form-input" value="{{ photo.caption or '' }}">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Plats</label>
+                <input type="text" name="location" class="form-input" value="{{ photo.location or '' }}">
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Koppla till berättelse</label>
+                    <select name="story_id" class="form-select">
+                        <option value="">Ingen berättelse</option>
+                        {% for story in stories %}
+                            <option value="{{ story.id }}" {{ 'selected' if photo.story_id == story.id else '' }}>{{ story.title }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Koppla till händelse</label>
+                    <select name="event_id" class="form-select">
+                        <option value="">Ingen händelse</option>
+                        {% for event in events %}
+                            <option value="{{ event.id }}" {{ 'selected' if photo.event_id == event.id else '' }}>{{ event.title }} ({{ event.date.strftime('%Y-%m-%d') }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                <button type="submit" class="btn btn-primary">Spara ändringar</button>
+                <a href="{{ url_for('admin.photos_list') }}" class="btn btn-secondary">Avbryt</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

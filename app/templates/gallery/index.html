@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}Galleri - Klubbans Vänner{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="page-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+        <div>
+            <h1 class="page-title">Galleri</h1>
+            <p class="page-subtitle">Bilder från våra äventyr</p>
+        </div>
+        {% if current_user.is_authenticated %}
+            <a href="{{ url_for('gallery.upload') }}" class="btn btn-primary">+ Ladda upp</a>
+        {% endif %}
+    </div>
+
+    {% if photos %}
+        <div class="photo-grid">
+            {% for photo in photos %}
+            <a href="{{ url_for('gallery.detail', photo_id=photo.id) }}" class="photo-item">
+                <img src="{{ url_for('static', filename='uploads/' + photo.filename) }}" alt="{{ photo.caption or 'Foto' }}" loading="lazy">
+            </a>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <div class="empty-state-icon">📸</div>
+            <p class="empty-state-text">Inga bilder uppladdade än.</p>
+            {% if current_user.is_authenticated %}
+                <a href="{{ url_for('gallery.upload') }}" class="btn btn-primary">Ladda upp den första!</a>
+            {% endif %}
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

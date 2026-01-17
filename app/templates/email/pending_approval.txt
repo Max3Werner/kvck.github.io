@@ -1,0 +1,12 @@
+Hej {{ admin.display_name or admin.username }}!
+
+En ny anvandare har registrerat sig och vantar pa godkannande:
+
+Namn: {{ user.display_name or user.username }}
+Anvandarnamn: @{{ user.username }}
+E-post: {{ user.email }}
+
+Granska ansokningar har: {{ approvals_url }}
+
+---
+Detta ar ett automatiskt meddelande fran Klubbans Vanner.

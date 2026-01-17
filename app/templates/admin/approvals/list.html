@@ -1,0 +1,96 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Godkannanden{% endblock %}
+{% block page_title %}Godkannanden{% endblock %}
+
+{% block content %}
+{% if pending %}
+<div class="card">
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Anvandare</th>
+                    <th>E-post</th>
+                    <th>Registrerad</th>
+                    <th>Atgarder</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in pending %}
+                <tr>
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                            {% if user.avatar_url %}
+                                <img src="{{ user.avatar_url }}" class="image-preview" style="width: 40px; height: 40px; border-radius: 50%;" alt="">
+                            {% else %}
+                                <div style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, var(--orange), #ff8fab); display: flex; align-items: center; justify-content: center; color: white; font-weight: 600;">
+                                    {{ (user.display_name or user.username)[0].upper() }}
+                                </div>
+                            {% endif %}
+                            <div>
+                                <strong>{{ user.display_name or user.username }}</strong>
+                                <br><small style="color: var(--text-muted);">@{{ user.username }}</small>
+                            </div>
+                        </div>
+                    </td>
+                    <td>{{ user.email }}</td>
+                    <td>{{ user.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                    <td>
+                        <div class="table-actions" style="gap: 0.5rem;">
+                            <form action="{{ url_for('admin.approve_user', id=user.id) }}" method="POST" style="display: inline;">
+                                <button type="submit" class="btn btn-primary btn-sm">Godkann</button>
+                            </form>
+                            <button type="button" class="btn btn-danger btn-sm" onclick="showRejectModal({{ user.id }}, '{{ user.display_name or user.username }}')">Avvisa</button>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% else %}
+<div class="card">
+    <div class="empty-state">
+        <div class="empty-state-icon">🎉</div>
+        <p class="empty-state-text">Inga anvandare vantar pa godkannande!</p>
+    </div>
+</div>
+{% endif %}
+
+<!-- Reject Modal -->
+<div id="rejectModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
+    <div style="background: white; border-radius: 12px; padding: 1.5rem; max-width: 400px; width: 90%; margin: auto;">
+        <h3 style="margin: 0 0 1rem;">Avvisa anvandare</h3>
+        <p style="color: var(--text-muted); margin-bottom: 1rem;">Ar du saker pa att du vill avvisa <strong id="rejectUserName"></strong>?</p>
+        <form id="rejectForm" method="POST">
+            <div class="form-group">
+                <label class="form-label">Anledning (valfritt)</label>
+                <textarea name="reason" class="form-textarea" rows="3" placeholder="Ange en anledning om du vill..."></textarea>
+            </div>
+            <div style="display: flex; gap: 0.75rem; justify-content: flex-end;">
+                <button type="button" class="btn btn-secondary" onclick="hideRejectModal()">Avbryt</button>
+                <button type="submit" class="btn btn-danger">Avvisa</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function showRejectModal(userId, userName) {
+    document.getElementById('rejectUserName').textContent = userName;
+    document.getElementById('rejectForm').action = '/admin/approvals/' + userId + '/reject';
+    document.getElementById('rejectModal').style.display = 'flex';
+}
+
+function hideRejectModal() {
+    document.getElementById('rejectModal').style.display = 'none';
+}
+
+// Close modal on background click
+document.getElementById('rejectModal').addEventListener('click', function(e) {
+    if (e.target === this) hideRejectModal();
+});
+</script>
+{% endblock %}

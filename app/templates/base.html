@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Klubbans Vänner - Snyggaste cykelklubben och snällaste!">
+    <title>{% block title %}Klubbans Vänner{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <div class="page-wrapper">
+        <!-- Header -->
+        <header class="header">
+            <div class="container">
+                <nav class="nav-container">
+                    <a href="{{ url_for('main.index') }}" class="logo-section">
+                        <img src="{{ url_for('static', filename='images/KlubbanLogga01.png') }}" alt="Klubbans Vänner" class="logo-img">
+                        <span class="logo-text"><span>Klubbans</span> Vänner</span>
+                    </a>
+
+                    <ul class="nav-links">
+                        <li><a href="{{ url_for('main.index') }}" class="nav-link {% if request.endpoint == 'main.index' %}active{% endif %}">Hem</a></li>
+                        <li><a href="{{ url_for('events.index') }}" class="nav-link {% if 'events' in request.endpoint %}active{% endif %}">Turer</a></li>
+                        <li><a href="{{ url_for('stories.index') }}" class="nav-link {% if 'stories' in request.endpoint %}active{% endif %}">Berättelser</a></li>
+                        <li><a href="{{ url_for('gallery.index') }}" class="nav-link {% if 'gallery' in request.endpoint %}active{% endif %}">Galleri</a></li>
+                        <li><a href="{{ url_for('profile.members') }}" class="nav-link {% if request.endpoint == 'profile.members' %}active{% endif %}">Medlemmar</a></li>
+                    </ul>
+
+                    <div class="nav-user">
+                        {% if current_user.is_authenticated %}
+                            {% if current_user.is_admin %}
+                                <a href="{{ url_for('admin.dashboard') }}" class="btn btn-ghost" style="color: var(--orange);">Admin</a>
+                            {% endif %}
+                            <a href="{{ url_for('profile.view', username=current_user.username) }}" class="btn btn-ghost">
+                                {{ current_user.display_name or current_user.username }}
+                            </a>
+                            <a href="{{ url_for('auth.logout') }}" class="btn btn-secondary">Logga ut</a>
+                        {% else %}
+                            <a href="{{ url_for('auth.login') }}" class="btn btn-ghost">Logga in</a>
+                            <a href="{{ url_for('auth.signup') }}" class="btn btn-primary">Bli medlem</a>
+                        {% endif %}
+                    </div>
+
+                    <button class="hamburger" id="hamburger" aria-label="Meny">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
+                </nav>
+            </div>
+        </header>
+
+        <!-- Mobile Navigation -->
+        <div class="mobile-nav" id="mobileNav">
+            <a href="{{ url_for('main.index') }}" class="mobile-nav-link">🏠 Hem</a>
+            <a href="{{ url_for('events.index') }}" class="mobile-nav-link">🚴 Turer</a>
+            <a href="{{ url_for('stories.index') }}" class="mobile-nav-link">📖 Berättelser</a>
+            <a href="{{ url_for('gallery.index') }}" class="mobile-nav-link">📸 Galleri</a>
+            <a href="{{ url_for('profile.members') }}" class="mobile-nav-link">👥 Medlemmar</a>
+            <hr style="border-color: var(--border); margin: 1rem 0;">
+            {% if current_user.is_authenticated %}
+                {% if current_user.is_admin %}
+                    <a href="{{ url_for('admin.dashboard') }}" class="mobile-nav-link" style="color: var(--orange);">⚙️ Admin</a>
+                {% endif %}
+                <a href="{{ url_for('profile.view', username=current_user.username) }}" class="mobile-nav-link">👤 Min profil</a>
+                <a href="{{ url_for('auth.logout') }}" class="mobile-nav-link">🚪 Logga ut</a>
+            {% else %}
+                <a href="{{ url_for('auth.login') }}" class="mobile-nav-link">🔐 Logga in</a>
+                <a href="{{ url_for('auth.signup') }}" class="mobile-nav-link">✨ Bli medlem</a>
+            {% endif %}
+        </div>
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="flash flash-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <!-- Main Content -->
+        <main class="main-content">
+            {% block content %}{% endblock %}
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="container">
+                <div class="footer-content">
+                    <span class="footer-text">© 2026 Klubbans Vänner. Snyggaste klubben och snällaste!</span>
+                    <span class="footer-text">Skapat med ❤️ och mycket kaffe</span>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Mobile menu toggle
+        const hamburger = document.getElementById('hamburger');
+        const mobileNav = document.getElementById('mobileNav');
+
+        hamburger.addEventListener('click', () => {
+            mobileNav.classList.toggle('active');
+            document.body.style.overflow = mobileNav.classList.contains('active') ? 'hidden' : '';
+        });
+
+        // Close mobile nav on link click
+        document.querySelectorAll('.mobile-nav-link').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileNav.classList.remove('active');
+                document.body.style.overflow = '';
+            });
+        });
+
+        // Auto-hide flash messages
+        setTimeout(() => {
+            document.querySelectorAll('.flash').forEach(flash => {
+                flash.style.opacity = '0';
+                flash.style.transform = 'translateX(20px)';
+                setTimeout(() => flash.remove(), 300);
+            });
+        }, 5000);
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

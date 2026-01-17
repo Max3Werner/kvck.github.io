@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Vantar pa godkannande - Klubbans Vanner{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 440px; padding-top: 3rem;">
+    <div style="text-align: center; margin-bottom: 2rem;">
+        <div style="font-size: 4rem; margin-bottom: 1rem;">⏳</div>
+        <h1 style="font-size: 1.75rem; margin-bottom: 0.5rem;">Nastan dar!</h1>
+        <p style="color: var(--gray);">Din ansokan vantar pa godkannande.</p>
+    </div>
+
+    <div class="card">
+        <div class="card-body" style="text-align: center;">
+            <p style="color: var(--gray); margin-bottom: 1.5rem; line-height: 1.6;">
+                Din e-postadress ar verifierad! Nu behover en administratör
+                godkanna ditt konto innan du kan logga in.
+            </p>
+
+            <div style="background: linear-gradient(135deg, var(--orange-light), var(--pink-light)); border-radius: 8px; padding: 1.25rem; margin-bottom: 1.5rem;">
+                <p style="margin: 0; font-size: 0.9375rem; color: var(--text-primary);">
+                    Du far ett mail nar ditt konto har godkants.
+                    Det brukar inte ta lang tid!
+                </p>
+            </div>
+
+            <div style="border-top: 1px solid var(--border); padding-top: 1.5rem; margin-top: 1rem;">
+                <p style="margin: 0 0 0.5rem; font-size: 0.8125rem; color: var(--text-muted);">
+                    Under tiden kan du lasa mer om klubben:
+                </p>
+                <a href="{{ url_for('main.about') }}" class="btn btn-ghost">Om Klubbans Vanner</a>
+            </div>
+        </div>
+    </div>
+
+    <p style="text-align: center; margin-top: 1.5rem; color: var(--gray);">
+        <a href="{{ url_for('main.index') }}">Tillbaka till startsidan</a>
+    </p>
+</div>
+{% endblock %}

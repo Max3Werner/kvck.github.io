@@ -1,0 +1,13 @@
+Hej {{ user.display_name or user.username }}!
+
+Fantastiskt! Ditt konto har nu godkants och du ar officiellt en av Klubbans Vanner.
+
+Du kan nu logga in och borja utforska klubben, anmala dig till turer och dela dina cykelaventyr!
+
+Logga in har: {{ login_url }}
+
+Vi ses pa vagarna!
+
+---
+Klubbans Vanner
+Snyggaste klubben och snallaste!

@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}Skriv berättelse - Klubbans Vänner{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 700px;">
+    <div class="page-header">
+        <h1 class="page-title">Skriv en berättelse</h1>
+        <p class="page-subtitle">Dela din turrapport med klubben</p>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <form method="POST" action="{{ url_for('stories.create') }}">
+                <div class="form-group">
+                    <label class="form-label" for="title">Titel *</label>
+                    <input type="text" id="title" name="title" class="form-input" placeholder="En minnesvärd rubrik" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="excerpt">Sammanfattning</label>
+                    <textarea id="excerpt" name="excerpt" class="form-textarea" style="min-height: 80px;" placeholder="Kort sammanfattning som visas i listan"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="content">Berättelse *</label>
+                    <textarea id="content" name="content" class="form-textarea" style="min-height: 300px;" placeholder="Berätta om din tur..." required></textarea>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="form-group">
+                        <label class="form-label" for="ride_date">Datum för turen</label>
+                        <input type="date" id="ride_date" name="ride_date" class="form-input">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="location">Plats</label>
+                        <input type="text" id="location" name="location" class="form-input" placeholder="T.ex. Stockholms skärgård">
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="form-group">
+                        <label class="form-label" for="distance_km">Distans (km)</label>
+                        <input type="number" id="distance_km" name="distance_km" class="form-input" placeholder="85" step="0.1">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="duration_hours">Tid (timmar)</label>
+                        <input type="number" id="duration_hours" name="duration_hours" class="form-input" placeholder="4.5" step="0.1">
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 1rem;">
+                    <button type="submit" class="btn btn-primary" style="flex: 1;">Publicera</button>
+                    <a href="{{ url_for('stories.index') }}" class="btn btn-secondary">Avbryt</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

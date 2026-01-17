@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Om oss - Klubbans Vänner{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 700px;">
+    <div class="page-header" style="text-align: center;">
+        <h1 class="page-title">Om Klubbans Vänner</h1>
+        <p class="page-subtitle">Snyggaste klubben och snällaste!</p>
+    </div>
+
+    <div class="card" style="margin-bottom: 2rem;">
+        <div class="card-body">
+            <p style="font-size: 1.125rem; line-height: 1.8; color: var(--gray-light);">
+                Vi är alla Klubbans Vänner. En gemenskap byggd på kärlek till cykling,
+                gott sällskap och den där speciella känslan när vinden sveper förbi
+                och benen snurrar i perfekt takt.
+            </p>
+            <p style="font-size: 1.125rem; line-height: 1.8; color: var(--gray-light); margin-top: 1rem;">
+                Oavsett om du är en erfaren racer eller nybörjare som precis hittat
+                din första cykel — här är du alltid välkommen. För hos oss handlar
+                det inte om att vara snabbast, utan om att ha kul tillsammans.
+            </p>
+        </div>
+    </div>
+
+    <!-- Mystery Box -->
+    <div class="card" style="background: linear-gradient(135deg, var(--pink-glow), var(--blue-glow)); margin-bottom: 2rem;">
+        <div class="card-body">
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
+                <span style="font-size: 1.25rem;">🔮</span>
+                <span style="font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--pink);">Mysteriet</span>
+            </div>
+            <p style="font-size: 1rem; color: var(--gray-light); line-height: 1.7;">
+                Vem är Klubban? Ingen vet säkert. Somliga säger att Klubban är en legend
+                som cyklade 16 mil i Siljan Runt 1987 och fortfarande har ont i benen.
+                Andra säger att Klubban finns i oss alla. En sak är säker: vi är alla Klubbans vänner.
+            </p>
+        </div>
+    </div>
+
+    <!-- Contact -->
+    <div class="card">
+        <div class="card-body" style="text-align: center;">
+            <h3 style="margin-bottom: 0.5rem;">Vill du hänga med?</h3>
+            <p style="color: var(--gray); margin-bottom: 1.5rem;">Skicka oss ett meddelande!</p>
+            <a href="mailto:max3werner@icloud.com" class="btn btn-primary">✉️ max3werner@icloud.com</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

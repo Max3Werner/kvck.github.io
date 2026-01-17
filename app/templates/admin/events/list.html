@@ -1,0 +1,69 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Kalenderhändelser{% endblock %}
+{% block page_title %}Kalenderhändelser{% endblock %}
+
+{% block top_actions %}
+<a href="{{ url_for('admin.events_create') }}" class="btn btn-primary">+ Ny händelse</a>
+{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Titel</th>
+                    <th>Datum</th>
+                    <th>Plats</th>
+                    <th>Typ</th>
+                    <th>Distans</th>
+                    <th>Status</th>
+                    <th>Åtgärder</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for event in events %}
+                <tr>
+                    <td>
+                        <strong>{{ event.title }}</strong>
+                        {% if event.subtitle %}
+                            <br><small style="color: var(--text-muted);">{{ event.subtitle }}</small>
+                        {% endif %}
+                    </td>
+                    <td>{{ event.date.strftime('%Y-%m-%d %H:%M') }}</td>
+                    <td>{{ event.location or '-' }}</td>
+                    <td>
+                        <span class="badge badge-info">{{ event.event_type }}</span>
+                    </td>
+                    <td>{{ event.distance_km|int if event.distance_km else '-' }} km</td>
+                    <td>
+                        {% if event.is_featured %}
+                            <span class="badge badge-success">Utmärkt</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div class="table-actions">
+                            <a href="{{ url_for('admin.events_edit', id=event.id) }}" class="btn btn-secondary btn-sm">Redigera</a>
+                            <form action="{{ url_for('admin.events_delete', id=event.id) }}" method="POST" style="display: inline;" onsubmit="return confirm('Är du säker på att du vill ta bort detta evenemang?');">
+                                <button type="submit" class="btn btn-danger btn-sm">Ta bort</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="7">
+                        <div class="empty-state">
+                            <div class="empty-state-icon">📅</div>
+                            <p class="empty-state-text">Inga händelser ännu</p>
+                            <a href="{{ url_for('admin.events_create') }}" class="btn btn-primary">Skapa första händelsen</a>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

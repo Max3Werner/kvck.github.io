@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f8f9fa;">
+    <table role="presentation" style="width: 100%; border-collapse: collapse;">
+        <tr>
+            <td style="padding: 40px 20px;">
+                <table role="presentation" style="max-width: 500px; margin: 0 auto; background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
+                    <!-- Header -->
+                    <tr>
+                        <td style="background: linear-gradient(135deg, #ff6b35, #ff8fab); padding: 30px; text-align: center;">
+                            <h1 style="margin: 0; color: white; font-size: 24px; font-weight: 700;">Klubbans Vanner</h1>
+                        </td>
+                    </tr>
+                    <!-- Content -->
+                    <tr>
+                        <td style="padding: 40px 30px;">
+                            <h2 style="margin: 0 0 20px; color: #1a1a2e; font-size: 20px;">Hej {{ user.display_name or user.username }},</h2>
+                            <p style="margin: 0 0 20px; color: #4a5568; font-size: 16px; line-height: 1.6;">
+                                Tack for ditt intresse att ga med i Klubbans Vanner.
+                            </p>
+                            <p style="margin: 0 0 20px; color: #4a5568; font-size: 16px; line-height: 1.6;">
+                                Tyvarr kunde vi inte godkanna din ansokan just nu.
+                            </p>
+                            {% if reason %}
+                            <div style="background: #fff5f5; border-left: 4px solid #fc8181; padding: 15px; margin: 20px 0; border-radius: 0 8px 8px 0;">
+                                <p style="margin: 0; color: #c53030; font-size: 14px;">
+                                    <strong>Anledning:</strong> {{ reason }}
+                                </p>
+                            </div>
+                            {% endif %}
+                            <p style="margin: 20px 0 0; color: #4a5568; font-size: 16px; line-height: 1.6;">
+                                Om du har fragor eller tror att detta ar ett misstag, kontakta oss garna.
+                            </p>
+                        </td>
+                    </tr>
+                    <!-- Footer -->
+                    <tr>
+                        <td style="padding: 20px 30px; background: #f8f9fa; text-align: center;">
+                            <p style="margin: 0; color: #a0aec0; font-size: 12px;">
+                                Med vanliga halsningar,<br>Klubbans Vanner
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

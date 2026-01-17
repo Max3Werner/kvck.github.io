@@ -1,0 +1,62 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Ladda upp foton{% endblock %}
+{% block page_title %}Ladda upp foton{% endblock %}
+
+{% block top_actions %}
+<a href="{{ url_for('admin.photos_list') }}" class="btn btn-secondary">Tillbaka</a>
+{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-body">
+        <form method="POST" enctype="multipart/form-data">
+            <div class="form-group">
+                <label class="form-label">Välj bilder *</label>
+                <label class="file-upload" style="min-height: 200px;">
+                    <div class="file-upload-icon">📸</div>
+                    <div class="file-upload-text">Klicka för att välja bilder (du kan välja flera)</div>
+                    <input type="file" name="photos" accept="image/*" multiple required>
+                </label>
+                <p class="form-hint">Tillåtna format: JPG, PNG, GIF, WebP. Max 16MB per bild.</p>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Bildtext (valfritt)</label>
+                <input type="text" name="caption" class="form-input" placeholder="Beskrivning som gäller alla bilder...">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Plats (valfritt)</label>
+                <input type="text" name="location" class="form-input" placeholder="Var togs bilderna?">
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Koppla till berättelse</label>
+                    <select name="story_id" class="form-select">
+                        <option value="">Ingen berättelse</option>
+                        {% for story in stories %}
+                            <option value="{{ story.id }}">{{ story.title }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Koppla till händelse</label>
+                    <select name="event_id" class="form-select">
+                        <option value="">Ingen händelse</option>
+                        {% for event in events %}
+                            <option value="{{ event.id }}">{{ event.title }} ({{ event.date.strftime('%Y-%m-%d') }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                <button type="submit" class="btn btn-primary">Ladda upp</button>
+                <a href="{{ url_for('admin.photos_list') }}" class="btn btn-secondary">Avbryt</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

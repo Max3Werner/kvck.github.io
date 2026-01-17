@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block title %}{{ user.display_name or user.username }} - Klubbans Vänner{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Profile Header -->
+    <div class="card" style="margin-bottom: 2rem;">
+        <div class="card-body" style="display: flex; gap: 2rem; flex-wrap: wrap; align-items: flex-start;">
+            <div class="avatar avatar-lg">
+                {{ user.display_name[0].upper() if user.display_name else '?' }}
+            </div>
+            <div style="flex: 1; min-width: 200px;">
+                <h1 style="font-size: 1.5rem; margin-bottom: 0.25rem;">{{ user.display_name or user.username }}</h1>
+                <p style="color: var(--gray); margin-bottom: 1rem;">@{{ user.username }}</p>
+
+                {% if user.bio %}
+                    <p style="color: var(--gray-light); margin-bottom: 1rem;">{{ user.bio }}</p>
+                {% endif %}
+
+                <div style="display: flex; gap: 2rem; flex-wrap: wrap; color: var(--gray); font-size: 0.875rem;">
+                    <span>🗓️ Medlem sedan {{ user.created_at.strftime('%b %Y') }}</span>
+                    <span>🚴 {{ event_count }} turer</span>
+                    <span>📖 {{ stories|length }} berättelser</span>
+                    <span>📸 {{ photos|length }} bilder</span>
+                </div>
+
+                {% if current_user.is_authenticated and current_user.id == user.id %}
+                    <a href="{{ url_for('profile.edit') }}" class="btn btn-secondary" style="margin-top: 1rem;">Redigera profil</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem;">
+        <div>
+            <!-- Stories -->
+            {% if stories %}
+            <div class="section-label">Berättelser</div>
+            <div style="display: flex; flex-direction: column; gap: 1rem; margin-bottom: 2rem;">
+                {% for story in stories %}
+                <a href="{{ url_for('stories.detail', slug=story.slug) }}" class="card" style="text-decoration: none; color: inherit;">
+                    <div class="card-body">
+                        <h3 style="margin-bottom: 0.5rem;">{{ story.title }}</h3>
+                        <p style="color: var(--gray); font-size: 0.875rem;">{{ story.excerpt or story.content[:100] }}...</p>
+                        <span style="color: var(--gray); font-size: 0.75rem;">{{ story.published_at.strftime('%d %b %Y') }}</span>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- Photos -->
+            {% if photos %}
+            <div class="section-label">Bilder</div>
+            <div class="photo-grid" style="grid-template-columns: repeat(4, 1fr);">
+                {% for photo in photos %}
+                <a href="{{ url_for('gallery.detail', photo_id=photo.id) }}" class="photo-item">
+                    <img src="{{ url_for('static', filename='uploads/' + photo.filename) }}" alt="{{ photo.caption or 'Foto' }}" loading="lazy">
+                </a>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Activity Sidebar -->
+        <aside>
+            <div class="section-label">Aktivitet</div>
+            <div class="card">
+                <div class="card-body" style="padding: 0.5rem 1rem;">
+                    {% if activities %}
+                        {% for activity in activities %}
+                        <div class="activity-item">
+                            <div class="activity-content">
+                                <div class="activity-text">{{ activity.message }}</div>
+                                <div class="activity-time">{{ activity.created_at.strftime('%d %b, %H:%M') }}</div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <p style="color: var(--gray); text-align: center; padding: 1rem 0;">Ingen aktivitet än.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </aside>
+    </div>
+</div>
+
+<style>
+@media (max-width: 768px) {
+    .container > div[style*="grid-template-columns"] {
+        grid-template-columns: 1fr !important;
+    }
+    .photo-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+}
+</style>
+{% endblock %}

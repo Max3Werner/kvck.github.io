@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block title %}{{ story.title }} - Klubbans Vänner{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 800px;">
+    <a href="{{ url_for('stories.index') }}" style="display: inline-flex; align-items: center; gap: 0.5rem; color: var(--gray); margin-bottom: 1.5rem;">&larr; Alla berättelser</a>
+
+    <article>
+        <!-- Header -->
+        <header style="margin-bottom: 2rem;">
+            <h1 style="font-size: 2rem; margin-bottom: 1rem;">{{ story.title }}</h1>
+            <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; color: var(--gray);">
+                <a href="{{ url_for('profile.view', username=story.author.username) }}" style="display: flex; align-items: center; gap: 0.5rem; color: inherit;">
+                    <div class="avatar" style="width: 32px; height: 32px; font-size: 0.75rem;">
+                        {{ story.author.display_name[0].upper() if story.author.display_name else '?' }}
+                    </div>
+                    <span>{{ story.author.display_name or story.author.username }}</span>
+                </a>
+                <span>{{ story.published_at.strftime('%d %b %Y') }}</span>
+                {% if story.ride_date %}
+                    <span>🚴 {{ story.ride_date.strftime('%d %b %Y') }}</span>
+                {% endif %}
+            </div>
+
+            <!-- Meta info -->
+            {% if story.distance_km or story.location or story.duration_hours %}
+            <div style="display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 1rem; padding: 1rem; background: var(--black-light); border-radius: 10px;">
+                {% if story.location %}
+                    <span style="display: flex; align-items: center; gap: 0.375rem;">📍 {{ story.location }}</span>
+                {% endif %}
+                {% if story.distance_km %}
+                    <span style="display: flex; align-items: center; gap: 0.375rem;">📏 {{ story.distance_km|int }} km</span>
+                {% endif %}
+                {% if story.duration_hours %}
+                    <span style="display: flex; align-items: center; gap: 0.375rem;">⏱️ {{ story.duration_hours }} timmar</span>
+                {% endif %}
+            </div>
+            {% endif %}
+        </header>
+
+        <!-- Content -->
+        <div style="font-size: 1.0625rem; line-height: 1.8; color: var(--gray-light); white-space: pre-wrap;">{{ story.content }}</div>
+
+        <!-- Comments Section -->
+        <section style="margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--border);">
+            <h3 style="margin-bottom: 1.5rem;">Kommentarer ({{ comments|length }})</h3>
+
+            {% if current_user.is_authenticated %}
+            <form method="POST" action="{{ url_for('stories.add_comment', slug=story.slug) }}" style="margin-bottom: 2rem;">
+                <div class="form-group">
+                    <textarea name="content" class="form-textarea" placeholder="Skriv en kommentar..." style="min-height: 100px;" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Kommentera</button>
+            </form>
+            {% else %}
+            <p style="color: var(--gray); margin-bottom: 2rem;">
+                <a href="{{ url_for('auth.login') }}">Logga in</a> för att kommentera.
+            </p>
+            {% endif %}
+
+            {% if comments %}
+                <div style="display: flex; flex-direction: column; gap: 1rem;">
+                    {% for comment in comments %}
+                    <div class="card">
+                        <div class="card-body">
+                            <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem;">
+                                <div class="avatar" style="width: 32px; height: 32px; font-size: 0.75rem;">
+                                    {{ comment.author.display_name[0].upper() if comment.author.display_name else '?' }}
+                                </div>
+                                <div>
+                                    <a href="{{ url_for('profile.view', username=comment.author.username) }}" style="font-weight: 500;">
+                                        {{ comment.author.display_name or comment.author.username }}
+                                    </a>
+                                    <div style="font-size: 0.75rem; color: var(--gray);">{{ comment.created_at.strftime('%d %b %Y, %H:%M') }}</div>
+                                </div>
+                            </div>
+                            <p style="color: var(--gray-light);">{{ comment.content }}</p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p style="color: var(--gray); text-align: center;">Inga kommentarer än. Var först!</p>
+            {% endif %}
+        </section>
+    </article>
+</div>
+{% endblock %}

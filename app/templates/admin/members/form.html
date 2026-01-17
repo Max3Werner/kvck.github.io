@@ -1,0 +1,79 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Redigera medlem{% endblock %}
+{% block page_title %}Redigera medlem{% endblock %}
+
+{% block top_actions %}
+<a href="{{ url_for('admin.members_list') }}" class="btn btn-secondary">Tillbaka</a>
+{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-body">
+        <form method="POST" enctype="multipart/form-data">
+            <div style="text-align: center; margin-bottom: 2rem;">
+                {% if member.avatar_url %}
+                    <img src="{{ member.avatar_url }}" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover;" alt="">
+                {% else %}
+                    <div style="width: 100px; height: 100px; border-radius: 50%; background: linear-gradient(135deg, var(--orange), #ff8fab); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 2.5rem; margin: 0 auto;">
+                        {{ (member.display_name or member.username)[0].upper() }}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Användarnamn</label>
+                    <input type="text" class="form-input" value="{{ member.username }}" disabled>
+                    <p class="form-hint">Användarnamn kan inte ändras</p>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Visningsnamn</label>
+                    <input type="text" name="display_name" class="form-input" value="{{ member.display_name or '' }}">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">E-post *</label>
+                <input type="email" name="email" class="form-input" value="{{ member.email }}" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Bio</label>
+                <textarea name="bio" class="form-textarea" rows="3">{{ member.bio or '' }}</textarea>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Profilbild</label>
+                <label class="file-upload">
+                    <div class="file-upload-icon">📷</div>
+                    <div class="file-upload-text">Klicka för att ladda upp ny profilbild</div>
+                    <input type="file" name="avatar" accept="image/*">
+                    <img class="upload-preview image-preview" style="display: none; margin-top: 1rem; border-radius: 50%;">
+                </label>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Nytt lösenord</label>
+                <input type="password" name="new_password" class="form-input" placeholder="Lämna tomt för att behålla nuvarande">
+                <p class="form-hint">Fyll bara i om du vill ändra lösenordet</p>
+            </div>
+
+            <div class="form-group">
+                <label class="form-check">
+                    <input type="checkbox" name="is_admin" {{ 'checked' if member.is_admin else '' }} {{ 'disabled' if member.id == current_user.id else '' }}>
+                    <span>Administrator</span>
+                </label>
+                {% if member.id == current_user.id %}
+                    <p class="form-hint">Du kan inte ändra din egen admin-status</p>
+                {% endif %}
+            </div>
+
+            <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                <button type="submit" class="btn btn-primary">Spara ändringar</button>
+                <a href="{{ url_for('admin.members_list') }}" class="btn btn-secondary">Avbryt</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

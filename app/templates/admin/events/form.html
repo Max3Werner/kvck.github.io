@@ -1,0 +1,113 @@
+{% extends "admin/base.html" %}
+
+{% block title %}{{ 'Redigera händelse' if event else 'Ny händelse' }}{% endblock %}
+{% block page_title %}{{ 'Redigera händelse' if event else 'Ny händelse' }}{% endblock %}
+
+{% block top_actions %}
+<a href="{{ url_for('admin.events_list') }}" class="btn btn-secondary">Tillbaka</a>
+{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-body">
+        <form method="POST" enctype="multipart/form-data">
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Titel *</label>
+                    <input type="text" name="title" class="form-input" value="{{ event.title if event else '' }}" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Undertitel</label>
+                    <input type="text" name="subtitle" class="form-input" value="{{ event.subtitle if event else '' }}">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Beskrivning</label>
+                <textarea name="description" class="form-textarea" rows="6">{{ event.description if event else '' }}</textarea>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Datum *</label>
+                    <input type="date" name="date" class="form-input" value="{{ event.date.strftime('%Y-%m-%d') if event else '' }}" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Tid</label>
+                    <input type="time" name="time" class="form-input" value="{{ event.date.strftime('%H:%M') if event else '08:00' }}">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Plats</label>
+                    <input type="text" name="location" class="form-input" value="{{ event.location if event else '' }}">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Typ</label>
+                    <select name="event_type" class="form-select">
+                        <option value="ride" {{ 'selected' if event and event.event_type == 'ride' else '' }}>Cykeltur</option>
+                        <option value="social" {{ 'selected' if event and event.event_type == 'social' else '' }}>Socialt</option>
+                        <option value="race" {{ 'selected' if event and event.event_type == 'race' else '' }}>Tävling</option>
+                        <option value="external" {{ 'selected' if event and event.event_type == 'external' else '' }}>Externt</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Distans (km)</label>
+                    <input type="number" name="distance_km" class="form-input" step="0.1" value="{{ event.distance_km if event and event.distance_km else '' }}">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Svårighetsgrad</label>
+                    <select name="difficulty" class="form-select">
+                        <option value="">Välj...</option>
+                        <option value="easy" {{ 'selected' if event and event.difficulty == 'easy' else '' }}>Lätt</option>
+                        <option value="medium" {{ 'selected' if event and event.difficulty == 'medium' else '' }}>Medel</option>
+                        <option value="hard" {{ 'selected' if event and event.difficulty == 'hard' else '' }}>Svår</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Max deltagare</label>
+                    <input type="number" name="max_participants" class="form-input" value="{{ event.max_participants if event and event.max_participants else '' }}">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Extern länk</label>
+                    <input type="url" name="external_url" class="form-input" value="{{ event.external_url if event else '' }}" placeholder="https://...">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Bild</label>
+                {% if event and event.image_url %}
+                    <div style="margin-bottom: 1rem;">
+                        <img src="{{ event.image_url }}" class="image-preview image-preview-lg" alt="Current image">
+                    </div>
+                {% endif %}
+                <label class="file-upload">
+                    <div class="file-upload-icon">📷</div>
+                    <div class="file-upload-text">Klicka för att ladda upp bild</div>
+                    <input type="file" name="image" accept="image/*">
+                    <img class="upload-preview image-preview image-preview-lg" style="display: none; margin-top: 1rem;">
+                </label>
+            </div>
+
+            <div class="form-group">
+                <label class="form-check">
+                    <input type="checkbox" name="is_featured" {{ 'checked' if event and event.is_featured else '' }}>
+                    <span>Markera som utvald (visas på startsidan)</span>
+                </label>
+            </div>
+
+            <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                <button type="submit" class="btn btn-primary">{{ 'Spara ändringar' if event else 'Skapa händelse' }}</button>
+                <a href="{{ url_for('admin.events_list') }}" class="btn btn-secondary">Avbryt</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
