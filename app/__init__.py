@@ -1,10 +1,12 @@
 from datetime import datetime
 from flask import Flask
 from flask_login import LoginManager
+from flask_migrate import Migrate
 from config import Config
 from models import db, User, UserState, UserRole
 
 login_manager = LoginManager()
+migrate = Migrate()
 login_manager.login_view = 'auth.login'
 login_manager.login_message = 'Logga in for att komma at denna sida.'
 
@@ -15,6 +17,7 @@ def create_app(config_class=Config):
 
     # Initialize extensions
     db.init_app(app)
+    migrate.init_app(app, db)
     login_manager.init_app(app)
 
     # Initialize Flask-Mail if configured
@@ -47,10 +50,10 @@ def create_app(config_class=Config):
     app.register_blueprint(admin_bp, url_prefix='/admin')
     app.register_blueprint(strava_bp, url_prefix='/strava')
 
-    # Create database tables
-    with app.app_context():
-        db.create_all()
-        # Create default admin user if not exists
+    # Create default admin user if not exists (runs after migrations)
+    @app.cli.command('create-admin')
+    def create_admin():
+        """Create the default admin user."""
         if not User.query.filter_by(username='klubban').first():
             admin = User(
                 username='klubban',
@@ -66,5 +69,8 @@ def create_app(config_class=Config):
             admin.set_password('klubban2026')
             db.session.add(admin)
             db.session.commit()
+            print('Admin user created: klubban')
+        else:
+            print('Admin user already exists')
 
     return app
