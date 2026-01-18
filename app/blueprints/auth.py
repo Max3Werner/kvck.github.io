@@ -207,6 +207,8 @@ def pending_approval():
 
 @auth_bp.route('/logout')
 @login_required
+
+# Disable email sending temporarily
 def logout():
     logout_user()
     flash('Du har loggat ut.', 'info')
