@@ -110,7 +110,7 @@ def signup():
             db.session.commit()
 
             # Send verification email
-            send_verification_email(user, token)
+          #  send_verification_email(user, token)
 
             # Store user id in session for resend functionality
             session['pending_verification_user_id'] = user.id
@@ -154,7 +154,7 @@ def verify_email(token):
     db.session.commit()
 
     # Notify admins about pending approval
-    send_pending_approval_to_admins(user)
+   # send_pending_approval_to_admins(user)
 
     flash('E-postadress verifierad! Ditt konto vantar nu pa godkannande.', 'success')
     return redirect(url_for('auth.pending_approval'))
