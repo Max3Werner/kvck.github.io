@@ -193,7 +193,7 @@ def resend_verification():
     db.session.commit()
 
     # Send verification email
-    send_verification_email(user, token)
+  #  send_verification_email(user, token)
 
     flash('Ett nytt verifieringsmail har skickats!', 'success')
     return redirect(url_for('auth.verification_sent'))
