@@ -20,6 +20,10 @@ def create_app(config_class=Config):
     migrate.init_app(app, db)
     login_manager.init_app(app)
 
+        with app.app_context():
+        db.create_all()
+
+
     # Initialize Flask-Mail if configured
     if app.config.get('MAIL_SERVER'):
         from flask_mail import Mail
