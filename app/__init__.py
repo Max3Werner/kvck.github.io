@@ -2,7 +2,7 @@ from datetime import datetime
 from flask import Flask
 from flask_login import LoginManager
 from flask_migrate import Migrate
-from config import Config
+from .config import Config
 from models import db, User, UserState, UserRole
 
 login_manager = LoginManager()
